@@ -1,0 +1,6 @@
+Data Peserta Bootcamp Digital Skill - Golang Backend Development
+1. Nama: Fariz Fahmi Faturachmad
+2. Email: farizfahmi674@gmail.com
+3. Sistem Operasi yang digunakan: Ubuntu 20.04(Kantor) / Windows(Rumah)
+4. Akun Gitlab/Github: farelamo
+5. Akun Telegram: @farelamo
