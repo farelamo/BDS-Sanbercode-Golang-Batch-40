@@ -146,12 +146,19 @@ func main() {
 	fmt.Println(luasPersegi(0, true))
 	fmt.Println(luasPersegi(0, false))
 
+	fmt.Println()
+
 	// Soal 4
 
-	var prefix interface{} = "hasil penjumlahan dari "
+	var prefix interface{} = "hasil penjumlahan dari"
 	var kumpulanAngkaPertama interface{} = []int{6, 8}
 	var kumpulanAngkaKedua interface{} = []int{12, 14}
 
-	fmt.Println(prefix, kumpulanAngkaPertama, kumpulanAngkaKedua)
+	pertama := kumpulanAngkaPertama.([]int)[0:1:1][0]
+	kedua 	:= kumpulanAngkaPertama.([]int)[1:2:2][0]
+	ketiga 	:= kumpulanAngkaKedua.([]int)[0:1:1][0]
+	keempat := kumpulanAngkaKedua.([]int)[1:2:2][0]
+
+	fmt.Println(prefix, pertama, "+", kedua, "+", ketiga, "+", keempat, "=", (pertama + kedua + ketiga + keempat))
 	// bingung casting bang, dari yang interface slice int ke slice string
 }
