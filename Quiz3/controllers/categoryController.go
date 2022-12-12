@@ -56,7 +56,7 @@ func UpdateCategory(ctx *gin.Context){
 	if ctx.Request.Method == "PUT" {
 		var category library.Category
 
-		id := ctx.Param("categoryId")
+		id := ctx.Param("id")
 
 		if err := ctx.ShouldBindJSON(&category); err != nil {
 			ctx.AbortWithError(http.StatusBadRequest, err)
@@ -84,7 +84,7 @@ func DeleteCategory(ctx *gin.Context){
 	if ctx.Request.Method == "DELETE" {
 		var category library.Category
 
-		id := ctx.Param("categoryId")
+		id := ctx.Param("id")
 
 		category.Id, _ = strconv.Atoi(id)
 

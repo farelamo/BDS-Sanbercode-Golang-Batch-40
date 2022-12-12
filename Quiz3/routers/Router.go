@@ -8,6 +8,11 @@ import (
 func StartServer() *gin.Engine {
 	router := gin.Default()
 
+	authMiddleware := router.Group("/admin", gin.BasicAuth(gin.Accounts{
+		"admin"		: "password",
+		"editor"	: "secret",
+	}))
+
 	// Route Bangun Datar
 	router.GET("/bangun-datar/segitiga-sama-sisi", controllers.SegitigaSamaSisi)
 	router.GET("/bangun-datar/jajar-genjang", controllers.JajarGenjang)
@@ -17,12 +22,16 @@ func StartServer() *gin.Engine {
 
 	// Route Categories
 	router.GET("/categories", controllers.GetAllCategory)
-	router.POST("/categories", controllers.CreateCategory)
-	router.PUT("/categories/:categoryId", controllers.UpdateCategory)
-	router.DELETE("/categories/:categoryId", controllers.DeleteCategory)
+	authMiddleware.POST("/categories", controllers.CreateCategory)
+
+	authMiddleware.PUT("/categories/:id", controllers.UpdateCategory)
+	authMiddleware.DELETE("/categories/:id", controllers.DeleteCategory)
 
 	// Route Books
-	router.POST("/books", controllers.CreateBook)
+	router.GET("/books", controllers.GetAllBook)
+	authMiddleware.POST("/books", controllers.CreateBook)
+	authMiddleware.PUT("/books/:id", controllers.UpdateBook)
+	authMiddleware.DELETE("/books/:id", controllers.DeleteBook)
 
 
 	return router
