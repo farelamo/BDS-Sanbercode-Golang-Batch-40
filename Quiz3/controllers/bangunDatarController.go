@@ -2,196 +2,164 @@ package controllers
 
 import (
 	"Quiz3/library"
-	"encoding/json"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 )
 
 var BangunDatar library.HitungBangunDatar
 
-func SegitigaSamaSisi(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	if r.Method == "GET" {
-		if r.Header.Get("Content-Type") != "application/json" {
-			alas, _		:= strconv.Atoi(r.PostFormValue("alas"))
-			tinggi, _ 	:= strconv.Atoi(r.PostFormValue("tinggi"))
+func SegitigaSamaSisi(ctx *gin.Context) {
+	var result int
 
-			if r.PostFormValue("hitung") == "luas" {
-				r := library.SegitigaSamaSisi{
-						Alas: alas, 
-						Tinggi: tinggi,
-						"status" : true,
-						"message": "Successfully Calculated Data",
-						"Result" : BangunDatar.Luas(),
-				}
-				
-				data, _ := json.Marshal(r)
-				w.Write(data)
-				return
-			} else {
-				r := library.SegitigaSamaSisi{
-					Alas: alas, 
-					Tinggi: tinggi,
-					"status" : true,
-					"message": "Successfully Calculated Data",
-					"Result" : BangunDatar.keliling(),
-				}
-				data, _ := json.Marshal(r)
-				w.Write(data)
-				return
-			}
+	if ctx.Request.Method == "GET" {
+
+		hitung 		:= ctx.Query("hitung")
+		alas, _ 	:= strconv.Atoi(ctx.Query("alas"))
+		tinggi, _ 	:= strconv.Atoi(ctx.Query("tinggi"))
+
+		BangunDatar = library.SegitigaSamaSisi{alas, tinggi}
+
+		if hitung == "luas" {
+			result = BangunDatar.Luas()
+		} else {
+			result = BangunDatar.Keliling()
 		}
-	}else {
-		http.Error(w, "Method Salah", http.StatusMethodNotAllowed)
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"status":  true,
+			"message": "Successfully Calculated Data",
+			"result":  result,
+		})
 		return
 	}
+
+	ctx.AbortWithStatusJSON(http.StatusMethodNotAllowed, gin.H{
+		"status":  true,
+		"message": "Method Salah",
+	})
 }
 
-func SegitigaSamaSisi(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	if r.Method == "GET" {
-		if r.Header.Get("Content-Type") != "application/json" {
-			alas, _		:= strconv.Atoi(r.PostFormValue("alas"))
-			tinggi, _ 	:= strconv.Atoi(r.PostFormValue("tinggi"))
+func PersegiPanjang(ctx *gin.Context) {
+	var result int
 
-			if r.PostFormValue("hitung") == "luas" {
-				r := library.SegitigaSamaSisi{
-						Alas: alas, 
-						Tinggi: tinggi,
-						"status" : true,
-						"message": "Successfully Calculated Data",
-						"Result" : BangunDatar.Luas(),
-				}
-				
-				data, _ := json.Marshal(r)
-				w.Write(data)
-				return
-			} else {
-				r := library.SegitigaSamaSisi{
-					Alas: alas, 
-					Tinggi: tinggi,
-					"status" : true,
-					"message": "Successfully Calculated Data",
-					"Result" : BangunDatar.keliling(),
-				}
-				data, _ := json.Marshal(r)
-				w.Write(data)
-				return
-			}
+	if ctx.Request.Method == "GET" {
+
+		hitung 		:= ctx.Query("hitung")
+		panjang, _ 	:= strconv.Atoi(ctx.Query("panjang"))
+		lebar, _ 	:= strconv.Atoi(ctx.Query("lebar"))
+
+		BangunDatar = library.PersegiPanjang{panjang, lebar}
+
+		if hitung == "luas" {
+			result = BangunDatar.Luas()
+		} else {
+			result = BangunDatar.Keliling()
 		}
-	}else {
-		http.Error(w, "Method Salah", http.StatusMethodNotAllowed)
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"status":  true,
+			"message": "Successfully Calculated Data",
+			"result":  result,
+		})
 		return
 	}
+
+	ctx.AbortWithStatusJSON(http.StatusMethodNotAllowed, gin.H{
+		"status":  true,
+		"message": "Method Salah",
+	})
 }
 
-func SegitigaSamaSisi(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	if r.Method == "GET" {
-		if r.Header.Get("Content-Type") != "application/json" {
-			alas, _		:= strconv.Atoi(r.PostFormValue("alas"))
-			tinggi, _ 	:= strconv.Atoi(r.PostFormValue("tinggi"))
+func Persegi(ctx *gin.Context) {
+	var result int
 
-			if r.PostFormValue("hitung") == "luas" {
-				r := library.SegitigaSamaSisi{
-						Alas: alas, 
-						Tinggi: tinggi,
-						"status" : true,
-						"message": "Successfully Calculated Data",
-						"Result" : BangunDatar.Luas(),
-				}
-				
-				data, _ := json.Marshal(r)
-				w.Write(data)
-				return
-			} else {
-				r := library.SegitigaSamaSisi{
-					Alas: alas, 
-					Tinggi: tinggi,
-					"status" : true,
-					"message": "Successfully Calculated Data",
-					"Result" : BangunDatar.keliling(),
-				}
-				data, _ := json.Marshal(r)
-				w.Write(data)
-				return
-			}
+	if ctx.Request.Method == "GET" {
+
+		hitung 		:= ctx.Query("hitung")
+		sisi, _ 	:= strconv.Atoi(ctx.Query("sisi"))
+
+		BangunDatar = library.Persegi{sisi}
+
+		if hitung == "luas" {
+			result = BangunDatar.Luas()
+		} else {
+			result = BangunDatar.Keliling()
 		}
-	}else {
-		http.Error(w, "Method Salah", http.StatusMethodNotAllowed)
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"status":  true,
+			"message": "Successfully Calculated Data",
+			"result":  result,
+		})
 		return
 	}
+
+	ctx.AbortWithStatusJSON(http.StatusMethodNotAllowed, gin.H{
+		"status":  true,
+		"message": "Method Salah",
+	})
 }
 
-func SegitigaSamaSisi(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	if r.Method == "GET" {
-		if r.Header.Get("Content-Type") != "application/json" {
-			alas, _		:= strconv.Atoi(r.PostFormValue("alas"))
-			tinggi, _ 	:= strconv.Atoi(r.PostFormValue("tinggi"))
+func JajarGenjang(ctx *gin.Context) {
+	var result int
 
-			if r.PostFormValue("hitung") == "luas" {
-				r := library.SegitigaSamaSisi{
-						Alas: alas, 
-						Tinggi: tinggi,
-						"status" : true,
-						"message": "Successfully Calculated Data",
-						"Result" : BangunDatar.Luas(),
-				}
-				
-				data, _ := json.Marshal(r)
-				w.Write(data)
-				return
-			} else {
-				r := library.SegitigaSamaSisi{
-					Alas: alas, 
-					Tinggi: tinggi,
-					"status" : true,
-					"message": "Successfully Calculated Data",
-					"Result" : BangunDatar.keliling(),
-				}
-				data, _ := json.Marshal(r)
-				w.Write(data)
-				return
-			}
+	if ctx.Request.Method == "GET" {
+
+		hitung 		:= ctx.Query("hitung")
+		sisi, _ 	:= strconv.Atoi(ctx.Query("sisi"))
+		alas, _ 	:= strconv.Atoi(ctx.Query("alas"))
+		tinggi, _ 	:= strconv.Atoi(ctx.Query("tinggi"))
+
+		BangunDatar = library.JajarGenjang{float64 (sisi), float64 (alas), float64 (tinggi)}
+
+		if hitung == "luas" {
+			result = BangunDatar.Luas()
+		} else {
+			result = BangunDatar.Keliling()
 		}
-	}else {
-		http.Error(w, "Method Salah", http.StatusMethodNotAllowed)
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"status":  true,
+			"message": "Successfully Calculated Data",
+			"result":  result,
+		})
 		return
 	}
+
+	ctx.AbortWithStatusJSON(http.StatusMethodNotAllowed, gin.H{
+		"status":  true,
+		"message": "Method Salah",
+	})
 }
 
-func Lingkaran(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	if r.Method == "GET" {
-		if r.Header.Get("Content-Type") != "application/json" {
-			jari, _		:= strconv.Atoi(r.PostFormValue("jari"))
+func Lingkaran(ctx *gin.Context) {
+	var result int
 
-			if r.PostFormValue("hitung") == "luas" {
-				r := library.Lingkaran{
-						Alas: jari,
-						"status" : true,
-						"message": "Successfully Calculated Data",
-						"Result" : BangunDatar.Luas(),
-				}
-				
-				data, _ := json.Marshal(r)
-				w.Write(data)
-				return
-			} else {
-				r := library.Lingkaran{
-					JariJari: alas,
-					"status" : true,
-					"message": "Successfully Calculated Data",
-					"Result" : BangunDatar.keliling(),
-				}
-				data, _ := json.Marshal(r)
-				w.Write(data)
-				return
-			}
+	if ctx.Request.Method == "GET" {
+
+		hitung 		:= ctx.Query("hitung")
+		jari, _ 	:= strconv.Atoi(ctx.Query("jari"))
+
+		BangunDatar = library.Lingkaran{float64 (jari)}
+
+		if hitung == "luas" {
+			result = BangunDatar.Luas()
+		} else {
+			result = BangunDatar.Keliling()
 		}
-	}else {
-		http.Error(w, "Method Salah", http.StatusMethodNotAllowed)
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"status":  true,
+			"message": "Successfully Calculated Data",
+			"result":  result,
+		})
 		return
 	}
+
+	ctx.AbortWithStatusJSON(http.StatusMethodNotAllowed, gin.H{
+		"status":  true,
+		"message": "Method Salah",
+	})
 }
+
