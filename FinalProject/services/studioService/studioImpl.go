@@ -2,6 +2,7 @@ package studioService
 
 import (
 	"FinalProject/models"
+	"FinalProject/services/filmService"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -19,8 +20,8 @@ func NewStudioService(DB *sql.DB) StudioService {
 }
 
 
-func (s *StudioImpl) GetStudio() (*[]models.Studio, error) {
-	var studios = []models.Studio{}
+func (s *StudioImpl) GetStudio() (*[]models.ResultStudioById, error) {
+	var studios = []models.ResultStudioById{}
 
 	sql 		:= `SELECT * FROM studios`
 	rows, err 	:= s.DB.Query(sql)
@@ -32,13 +33,21 @@ func (s *StudioImpl) GetStudio() (*[]models.Studio, error) {
 
 	for rows.Next() {
 		var studio = models.Studio{}
+		var result = models.ResultStudioById{}
 
 		err = rows.Scan(&studio.Id, &studio.Name, &studio.FilmId, &studio.CreatedAt, &studio.UpdatedAt,)
 		if err != nil {
 			return nil, err
 		}
 
-		studios = append(studios, studio)
+		filmService := filmService.NewFilmService(s.DB)
+		film, err 	:= filmService.GetFilmById(studio.FilmId)
+		if err != nil {
+			return nil, errors.New("There's no data film with id " + strconv.Itoa(studio.FilmId))
+		}
+
+		result  = models.ResultStudioById{studio.Id, studio.Name, film, studio.CreatedAt, studio.UpdatedAt}
+		studios = append(studios, result)
 	}
 
 	return &studios, nil
@@ -48,13 +57,19 @@ func (s *StudioImpl) AddStudio(studio *models.AddStudio) (*models.Studio, error)
 	var newStudio = models.Studio{}
 
 	if studio.Name == "" {
-		return nil, errors.New("Name Must Be Filled")
+		return nil, errors.New("name must be filled")
 	}else if strconv.Itoa(studio.FilmId) == "" {
-		return nil, errors.New("Film Id Must Be Filled")
+		return nil, errors.New("film id must be filled")
+	}
+
+	filmService := filmService.NewFilmService(s.DB)
+	_, err 	:= filmService.GetFilmById(studio.FilmId)
+	if err != nil {
+		return nil, errors.New("There's no data film with id " + strconv.Itoa(studio.FilmId))
 	}
 
 	sql := `INSERT INTO studios (name, film_id) VALUES ($1, $2) Returning *`
-	err := s.DB.QueryRow(sql, studio.Name, studio.FilmId,).Scan(
+	err = s.DB.QueryRow(sql, studio.Name, studio.FilmId,).Scan(
 		&newStudio.Id, &newStudio.Name, &newStudio.FilmId, &newStudio.CreatedAt, &newStudio.UpdatedAt,
 	)
 
@@ -65,14 +80,24 @@ func (s *StudioImpl) AddStudio(studio *models.AddStudio) (*models.Studio, error)
 	return &newStudio, nil
 }
 
-func (s *StudioImpl) GetStudioById(id int) (*models.Studio, error) {
+func (s *StudioImpl) GetStudioById(id int) (*models.ResultStudioById, error) {
 	var studio = models.Studio{}
+
 	sql := `SELECT * FROM studios WHERE id=($1)`
 	err := s.DB.QueryRow(sql, id).Scan(&studio.Id, &studio.Name, &studio.FilmId, &studio.CreatedAt, &studio.UpdatedAt,)
 	if err != nil {
 		return nil, err		
 	}
-	return &studio, err
+
+	filmService := filmService.NewFilmService(s.DB)
+	film, err 	:= filmService.GetFilmById(studio.FilmId)
+	if err != nil {
+		return nil, errors.New("There's no data film with id " + strconv.Itoa(studio.FilmId))
+	}
+
+	var result = models.ResultStudioById{studio.Id, studio.Name, film, studio.CreatedAt, studio.UpdatedAt}
+
+	return &result, err
 }
 
 func (s *StudioImpl) UpdateStudio(id int, studio *models.Studio) (int, error) {

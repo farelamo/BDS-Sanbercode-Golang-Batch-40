@@ -24,18 +24,25 @@ func (s *StudioControllerImpl) AddStudio(ctx *gin.Context){
 	var addStudio models.AddStudio
 
 	if err := ctx.ShouldBindJSON(&addStudio); err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"Status" : false,
+			"message": err,
+		})
 		return
 	}
 	
 	studio, err := s.studioService.AddStudio(&addStudio)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"Status": false,
 			"message": err.Error(),
 		})
 		return
 	}
-	ctx.JSON(http.StatusCreated, studio)
+	ctx.JSON(http.StatusCreated, gin.H{
+		"Status": true,
+		"data"  : studio,
+	})
 }
 
 func (s *StudioControllerImpl) GetStudio(ctx *gin.Context) {
@@ -43,17 +50,22 @@ func (s *StudioControllerImpl) GetStudio(ctx *gin.Context) {
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"Status": false,
 			"message": err,
 		})
 		return
 	}
-	ctx.JSON(http.StatusOK, studios)
+	ctx.JSON(http.StatusOK, gin.H{
+		"Status": true,
+		"data"  : studios,
+	})
 }
 
 func (s *StudioControllerImpl) GetStudioById(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
+			"Status": false,
 			"message": "Invalid request",
 		})
 		return
@@ -62,11 +74,15 @@ func (s *StudioControllerImpl) GetStudioById(ctx *gin.Context) {
 	studio, err := s.studioService.GetStudioById(id)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{
+			"Status": false,
 			"message": err,
 		})
 		return
 	}
-	ctx.JSON(http.StatusOK, studio)
+	ctx.JSON(http.StatusOK, gin.H{
+		"Status": true,
+		"data"  : studio,
+	})
 }
 
 func (s *StudioControllerImpl) UpdateStudio(ctx *gin.Context) {
@@ -75,19 +91,24 @@ func (s *StudioControllerImpl) UpdateStudio(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
+			"Status" : false,
 			"message": "Invalid request",
 		})
 		return
 	}
 
 	if err := ctx.ShouldBindJSON(&studio); err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"Status" : false,
+			"message": err,
+		})
 		return
 	}
 
 	count, err := s.studioService.UpdateStudio(id, &studio)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"Status" : false,
 			"message": err.Error(),
 		})
 		return
@@ -95,6 +116,7 @@ func (s *StudioControllerImpl) UpdateStudio(ctx *gin.Context) {
 
 	message := fmt.Sprintf("Updated data amount %d", count)
 	ctx.JSON(http.StatusOK, gin.H{
+		"Status" : true,
 		"message": message,
 	})
 }
@@ -103,6 +125,7 @@ func (s *StudioControllerImpl) DeleteStudio(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
+			"Status" : false,
 			"message": "Invalid request",
 		})
 		return
@@ -111,12 +134,14 @@ func (s *StudioControllerImpl) DeleteStudio(ctx *gin.Context) {
 	count, err := s.studioService.DeleteStudio(id)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"Status" : false,
 			"message": err.Error(),
 		})
 		return
 	}
 	message := fmt.Sprintf("Deleted data amount %d", count)
 	ctx.JSON(http.StatusOK, gin.H{
+		"Status" : true,
 		"message": message,
 	})	
 }

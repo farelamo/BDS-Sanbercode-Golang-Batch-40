@@ -1,6 +1,8 @@
 package ticketService
 
 import (
+	"FinalProject/services/studioService"
+	"FinalProject/services/userService"
 	"FinalProject/models"
 	"database/sql"
 	"errors"
@@ -19,8 +21,8 @@ func NewTicketService(DB *sql.DB) TicketService {
 }
 
 
-func (t *TicketImpl) GetTicket() (*[]models.Ticket, error) {
-	var tickets = []models.Ticket{}
+func (t *TicketImpl) GetTicket() (*[]models.TiketResultById, error) {
+	var tickets = []models.TiketResultById{}
 
 	sql 		:= `SELECT * FROM tickets`
 	rows, err 	:= t.DB.Query(sql)
@@ -38,7 +40,24 @@ func (t *TicketImpl) GetTicket() (*[]models.Ticket, error) {
 			return nil, err
 		}
 
-		tickets = append(tickets, ticket)
+		studioService 		:= studioService.NewStudioService(t.DB)
+		getStudio, err 	:= studioService.GetStudioById(ticket.StudioId)
+		if err != nil {
+			return nil, err
+		}
+
+		userService 	:= userService.NewUserService(t.DB)
+		getUser, err 	:= userService.GetUserById(ticket.UserId)
+		if err != nil{
+			return nil, err
+		}
+
+		result := models.TiketResultById{
+			ticket.Id, ticket.Type, getUser, getStudio,
+			ticket.CreatedAt, ticket.UpdatedAt,
+		}
+
+		tickets = append(tickets, result)
 	}
 
 	return &tickets, nil
@@ -55,8 +74,15 @@ func (t *TicketImpl) AddTicket(ticket *models.AddTicket) (*models.Ticket, error)
 		return nil, errors.New("Studi Id Must Be Filled")
 	}
 
+	studioService 		:= studioService.NewStudioService(t.DB)
+	_, err 	:= studioService.GetStudioById(ticket.StudioId)
+
+	if err != nil {
+		return nil, errors.New("There's no data studio with id " + strconv.Itoa(ticket.StudioId))
+	}
+
 	sql := `INSERT INTO tickets (type, user_id, studio_id) VALUES ($1, $2, $3) Returning *`
-	err := t.DB.QueryRow(sql, ticket.Type, ticket.UserId, ticket.StudioId,).Scan(
+	err = t.DB.QueryRow(sql, ticket.Type, ticket.UserId, ticket.StudioId,).Scan(
 		&newTicket.Id, &newTicket.Type, &newTicket.UserId, &newTicket.StudioId, &newTicket.CreatedAt, &newTicket.UpdatedAt,
 	)
 
@@ -67,16 +93,30 @@ func (t *TicketImpl) AddTicket(ticket *models.AddTicket) (*models.Ticket, error)
 	return &newTicket, nil
 }
 
-func (t *TicketImpl) GetTicketById(id int) (*models.Ticket, error) {
+func (t *TicketImpl) GetTicketById(id int) (*models.TiketResultById, error) {
 	var ticket = models.Ticket{}
-	
+
 	sql := `SELECT * FROM tickets WHERE id=($1)`
 	err := t.DB.QueryRow(sql, id).Scan(&ticket.Id, &ticket.Type, &ticket.UserId, &ticket.StudioId, &ticket.CreatedAt, &ticket.UpdatedAt,)
 	if err != nil {
 		return nil, err		
 	}
 
-	return &ticket, err
+	studioService 	:= studioService.NewStudioService(t.DB)
+	getStudio, err 	:= studioService.GetStudioById(ticket.StudioId)
+	if err != nil{
+		return nil, err
+	}
+
+	userService 	:= userService.NewUserService(t.DB)
+	getUser, err 	:= userService.GetUserById(ticket.UserId)
+	if err != nil{
+		return nil, err
+	}
+
+	result := models.TiketResultById{ticket.Id, ticket.Type, getUser, getStudio, ticket.CreatedAt, ticket.UpdatedAt}
+
+	return &result, err
 }
 
 func (t *TicketImpl) UpdateTicket(id int, ticket *models.Ticket) (int, error) {
