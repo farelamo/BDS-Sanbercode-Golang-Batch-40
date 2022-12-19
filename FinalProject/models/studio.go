@@ -9,3 +9,8 @@ type Studio struct {
 	CreatedAt   time.Time 	`json:"created_at,omitempty"`
 	UpdatedAt   time.Time 	`json:"updated_at,omitempty"`
 }
+
+type AddStudio struct {
+	Name 		string 		`json:"name,omitempty"`
+	FilmId 		int 		`json:"film_id,omitempty"`
+}
