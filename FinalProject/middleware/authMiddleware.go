@@ -12,7 +12,7 @@ func Authenticate(ctx *gin.Context) {
 	username, password, ok := ctx.Request.BasicAuth()
 
 	if !ok {
-		ctx.AbortWithError(http.StatusBadRequest, errors.New("authentication not found"))
+		ctx.AbortWithError(http.StatusUnauthorized, errors.New("authentication not found"))
 		return
 	}
 
