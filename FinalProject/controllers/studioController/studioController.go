@@ -1,4 +1,4 @@
-package controllers
+package studioController
 
 import "github.com/gin-gonic/gin"
 

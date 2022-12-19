@@ -1,4 +1,4 @@
-package services
+package filmService
 
 import (
 	"FinalProject/models"

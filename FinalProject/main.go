@@ -3,9 +3,17 @@ package main
 import (
 	"fmt"
 	"FinalProject/config"
-	"FinalProject/controllers"
 	"FinalProject/middleware"
-	"FinalProject/services"
+
+	"FinalProject/controllers/userController"
+	"FinalProject/controllers/filmController"
+	"FinalProject/controllers/studioController"
+	"FinalProject/controllers/ticketController"
+
+	"FinalProject/services/userService"
+	"FinalProject/services/filmService"
+	"FinalProject/services/studioService"
+	"FinalProject/services/ticketService"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,17 +22,17 @@ func main(){
 	router 	:= gin.Default()
 	DB 		:= config.Connect()
 
-	userService 		:= services.NewUserService(DB)
-	userController 		:= controllers.NewUserController(userService)
+	userService 		:= userService.NewUserService(DB)
+	userController 		:= userController.NewUserController(userService)
 
-	filmService 		:= services.NewFilmService(DB)
-	filmController 		:= controllers.NewFilmController(filmService)
+	filmService 		:= filmService.NewFilmService(DB)
+	filmController 		:= filmController.NewFilmController(filmService)
 
-	studioService 		:= services.NewStudioService(DB)
-	studioController 	:= controllers.NewStudioController(studioService)
+	studioService 		:= studioService.NewStudioService(DB)
+	studioController 	:= studioController.NewStudioController(studioService)
 	
-	ticketService 		:= services.NewTicketService(DB)
-	ticketController 	:= controllers.NewTicketController(ticketService)
+	ticketService 		:= ticketService.NewTicketService(DB)
+	ticketController 	:= ticketController.NewTicketController(ticketService)
 
 	/* User Route */
 	router.POST("/user", userController.AddUser)

@@ -1,4 +1,4 @@
-package services
+package ticketService
 
 import (
 	"FinalProject/models"
@@ -69,11 +69,13 @@ func (t *TicketImpl) AddTicket(ticket *models.AddTicket) (*models.Ticket, error)
 
 func (t *TicketImpl) GetTicketById(id int) (*models.Ticket, error) {
 	var ticket = models.Ticket{}
+	
 	sql := `SELECT * FROM tickets WHERE id=($1)`
 	err := t.DB.QueryRow(sql, id).Scan(&ticket.Id, &ticket.Type, &ticket.UserId, &ticket.StudioId, &ticket.CreatedAt, &ticket.UpdatedAt,)
 	if err != nil {
 		return nil, err		
 	}
+
 	return &ticket, err
 }
 

@@ -1,4 +1,4 @@
-package services
+package ticketService
 
 import "FinalProject/models"
 

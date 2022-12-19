@@ -1,20 +1,20 @@
-package controllers
+package studioController
 
 import (
 	"fmt"
 	"net/http"
 	"FinalProject/models"
-	"FinalProject/services"
+	. "FinalProject/services/studioService"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 type StudioControllerImpl struct {
-	studioService services.StudioService
+	studioService StudioService
 }
 
-func NewStudioController(studioService services.StudioService) StudioController {
+func NewStudioController(studioService StudioService) StudioController {
 	return &StudioControllerImpl{
 		studioService: studioService,
 	}

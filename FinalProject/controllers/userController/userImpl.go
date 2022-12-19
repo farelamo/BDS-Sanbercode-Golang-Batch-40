@@ -1,45 +1,45 @@
-package controllers
+package userController
 
 import (
 	"fmt"
 	"net/http"
 	"FinalProject/models"
-	"FinalProject/services"
+	. "FinalProject/services/userService"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-type FilmControllerImpl struct {
-	filmService services.FilmService
+type UserControllerImpl struct {
+	userService UserService
 }
 
-func NewFilmController(filmService services.FilmService) FilmController {
-	return &FilmControllerImpl{
-		filmService: filmService,
+func NewUserController(userService UserService) UserController {
+	return &UserControllerImpl{
+		userService: userService,
 	}
 }
 
-func (f *FilmControllerImpl) AddFilm(ctx *gin.Context){
-	var addFilm models.AddFilm
+func (u *UserControllerImpl) AddUser(ctx *gin.Context){
+	var addUser models.AddUser
 
-	if err := ctx.ShouldBindJSON(&addFilm); err != nil {
+	if err := ctx.ShouldBindJSON(&addUser); err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 	
-	film, err := f.filmService.AddFilm(&addFilm)
+	user, err := u.userService.AddUser(&addUser)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
 		})
 		return
 	}
-	ctx.JSON(http.StatusCreated, film)
+	ctx.JSON(http.StatusCreated, user)
 }
 
-func (f *FilmControllerImpl) GetFilm(ctx *gin.Context) {
-	films, err := f.filmService.GetFilm()
+func (u *UserControllerImpl) GetUser(ctx *gin.Context) {
+	users, err := u.userService.GetUser()
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -47,10 +47,10 @@ func (f *FilmControllerImpl) GetFilm(ctx *gin.Context) {
 		})
 		return
 	}
-	ctx.JSON(http.StatusOK, films)
+	ctx.JSON(http.StatusOK, users)
 }
 
-func (f *FilmControllerImpl) GetFilmById(ctx *gin.Context) {
+func (u *UserControllerImpl) GetUserById(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -59,18 +59,18 @@ func (f *FilmControllerImpl) GetFilmById(ctx *gin.Context) {
 		return
 	}
 
-	film, err := f.filmService.GetFilmById(id)
+	user, err := u.userService.GetUserById(id)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{
 			"message": err,
 		})
 		return
 	}
-	ctx.JSON(http.StatusOK, film)
+	ctx.JSON(http.StatusOK, user)
 }
 
-func (f *FilmControllerImpl) UpdateFilm(ctx *gin.Context) {
-	var film models.Film
+func (u *UserControllerImpl) UpdateUser(ctx *gin.Context) {
+	var user models.User
 
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -80,12 +80,12 @@ func (f *FilmControllerImpl) UpdateFilm(ctx *gin.Context) {
 		return
 	}
 
-	if err := ctx.ShouldBindJSON(&film); err != nil {
+	if err := ctx.ShouldBindJSON(&user); err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
-	count, err := f.filmService.UpdateFilm(id, &film)
+	count, err := u.userService.UpdateUser(id, &user)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
@@ -99,7 +99,7 @@ func (f *FilmControllerImpl) UpdateFilm(ctx *gin.Context) {
 	})
 }
 
-func (f *FilmControllerImpl) DeleteFilm(ctx *gin.Context) {
+func (u *UserControllerImpl) DeleteUser(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -108,7 +108,7 @@ func (f *FilmControllerImpl) DeleteFilm(ctx *gin.Context) {
 		return
 	}
 
-	count, err := f.filmService.DeleteFilm(id)
+	count, err := u.userService.DeleteUser(id)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),

@@ -1,4 +1,4 @@
-package services
+package studioService
 
 import (
 	"FinalProject/models"

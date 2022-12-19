@@ -1,4 +1,4 @@
-package controllers
+package ticketController
 
 import "github.com/gin-gonic/gin"
 

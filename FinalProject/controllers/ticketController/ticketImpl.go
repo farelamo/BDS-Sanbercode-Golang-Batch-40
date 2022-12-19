@@ -1,45 +1,45 @@
-package controllers
+package ticketController
 
 import (
 	"fmt"
 	"net/http"
 	"FinalProject/models"
-	"FinalProject/services"
+	. "FinalProject/services/ticketService"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-type UserControllerImpl struct {
-	userService services.UserService
+type TicketControllerImpl struct {
+	ticketService TicketService
 }
 
-func NewUserController(userService services.UserService) UserController {
-	return &UserControllerImpl{
-		userService: userService,
+func NewTicketController(ticketService TicketService) TicketController {
+	return &TicketControllerImpl{
+		ticketService: ticketService,
 	}
 }
 
-func (u *UserControllerImpl) AddUser(ctx *gin.Context){
-	var addUser models.AddUser
+func (t *TicketControllerImpl) AddTicket(ctx *gin.Context){
+	var addTicket models.AddTicket
 
-	if err := ctx.ShouldBindJSON(&addUser); err != nil {
+	if err := ctx.ShouldBindJSON(&addTicket); err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 	
-	user, err := u.userService.AddUser(&addUser)
+	film, err := t.ticketService.AddTicket(&addTicket)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
 		})
 		return
 	}
-	ctx.JSON(http.StatusCreated, user)
+	ctx.JSON(http.StatusCreated, film)
 }
 
-func (u *UserControllerImpl) GetUser(ctx *gin.Context) {
-	users, err := u.userService.GetUser()
+func (t *TicketControllerImpl) GetTicket(ctx *gin.Context) {
+	films, err := t.ticketService.GetTicket()
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -47,10 +47,10 @@ func (u *UserControllerImpl) GetUser(ctx *gin.Context) {
 		})
 		return
 	}
-	ctx.JSON(http.StatusOK, users)
+	ctx.JSON(http.StatusOK, films)
 }
 
-func (u *UserControllerImpl) GetUserById(ctx *gin.Context) {
+func (t *TicketControllerImpl) GetTicketById(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -59,18 +59,18 @@ func (u *UserControllerImpl) GetUserById(ctx *gin.Context) {
 		return
 	}
 
-	user, err := u.userService.GetUserById(id)
+	film, err := t.ticketService.GetTicketById(id)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{
 			"message": err,
 		})
 		return
 	}
-	ctx.JSON(http.StatusOK, user)
+	ctx.JSON(http.StatusOK, film)
 }
 
-func (u *UserControllerImpl) UpdateUser(ctx *gin.Context) {
-	var user models.User
+func (t *TicketControllerImpl) UpdateTicket(ctx *gin.Context) {
+	var ticket models.Ticket
 
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -80,12 +80,12 @@ func (u *UserControllerImpl) UpdateUser(ctx *gin.Context) {
 		return
 	}
 
-	if err := ctx.ShouldBindJSON(&user); err != nil {
+	if err := ctx.ShouldBindJSON(&ticket); err != nil {
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
-	count, err := u.userService.UpdateUser(id, &user)
+	count, err := t.ticketService.UpdateTicket(id, &ticket)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
@@ -99,7 +99,7 @@ func (u *UserControllerImpl) UpdateUser(ctx *gin.Context) {
 	})
 }
 
-func (u *UserControllerImpl) DeleteUser(ctx *gin.Context) {
+func (t *TicketControllerImpl) DeleteTicket(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -108,7 +108,7 @@ func (u *UserControllerImpl) DeleteUser(ctx *gin.Context) {
 		return
 	}
 
-	count, err := u.userService.DeleteUser(id)
+	count, err := t.ticketService.DeleteTicket(id)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),

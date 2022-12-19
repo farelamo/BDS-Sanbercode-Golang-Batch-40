@@ -1,4 +1,4 @@
-package controllers
+package filmController
 
 import "github.com/gin-gonic/gin"
 
